@@ -13,6 +13,7 @@ const CarDetail = () => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   useEffect(() => {
+    document.title = "Detalhes do Veículo | NCRUZ Carros";
     window.scrollTo(0, 0);
     fetchCarDetails();
   }, [id]);

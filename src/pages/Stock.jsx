@@ -17,6 +17,7 @@ const Stock = () => {
   const [minPrice, setMinPrice] = useState('');
 
   useEffect(() => {
+    document.title = "Stock Local | NCRUZ Carros";
     window.scrollTo(0, 0);
     fetchCars();
   }, []);
