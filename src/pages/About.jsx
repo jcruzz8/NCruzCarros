@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Users, Award, MapPin } from 'lucide-react';
 
 const About = () => {
+
+  useEffect(() => {
+      document.title = "Sobre Nós | NCRUZ Carros";
+      window.scrollTo(0, 0);
+    }, []);
+
   return (
     // Contentor principal
     <div className="bg-brand-dark min-h-screen pt-20 relative overflow-hidden">
