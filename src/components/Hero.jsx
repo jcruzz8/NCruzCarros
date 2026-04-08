@@ -81,7 +81,7 @@ const Hero = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="mt-16 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+          className="mt-16 pt-8 grid grid-cols-2 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
         >
           <div>
             <p className="text-3xl font-bold text-white">500+</p>
