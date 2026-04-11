@@ -86,7 +86,7 @@ const About = () => {
 
                 {/* Google Maps Embed */}
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m17!1m11!1m3!1d126.8637920945285!2d-9.166450942494269!3d38.792473013152055!2m2!1f34.587547698491!2f45!3m2!1i1024!2i768!4f35!3m3!1m2!1s0xd19329f9844073b%3A0x698f93abcfae02f8!2sR.%20de%20Angola%2C%20Olival%20Basto!5e1!3m2!1spt-PT!2spt!4v1769916425179!5m2!1spt-PT!2spt" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d956.5984858641579!2d-9.16628193034465!3d38.79341094350475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1933da11c52e59%3A0x34b657bfcc15a1de!2sNCruzCarros!5e1!3m2!1spt-PT!2spt!4v1775918887593!5m2!1spt-PT!2spt" 
                     width="100%" 
                     height="100%" 
                     style={{ border: 0, filter: 'grayscale(75%) invert(00%)' }} // Filtro Dark Mode no Mapa
