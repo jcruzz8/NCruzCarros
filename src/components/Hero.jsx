@@ -2,37 +2,28 @@ import React from 'react';
 import { ArrowRight, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import RippleGrid from './RippleGrid';
 
 const Hero = () => {
   return (
     <div className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
 
-      {/* 1. NOVO FUNDO: Ripple Grid (React Bits) */}
-      <div className="absolute inset-0 z-0  width: '1080px', height: '1080px', position: 'relative' overflow-hidden">
-        <RippleGrid
-          enableRainbow={false}
-          gridColor="#d71d1d"
-          rippleIntensity={0.05}
-          gridSize={10}
-          gridThickness={10}
-          fadeDistance={1.5}
-          vignetteStrength={2}
-          glowIntensity={0.3}
-          opacity={1}
-          gridRotation={0}
-          mouseInteraction
-          mouseInteractionRadius={1}
-        />
-
+      {/* 1. NOVO FUNDO: Vídeo Cinematográfico */}
+      <div className="absolute inset-0 z-0">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="w-full h-full object-cover opacity-60"
+        >
+          <source src="/video-loop-cars-black.mp4" type="video/mp4" />
+        </video>
       </div>
 
-      {/* 2. Overlay Gradiente (Mantém o texto legível) */}
-      {/* NOTA: 'pointer-events-none' adicionado para o rato conseguir interagir com a grelha que está por baixo! */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-[1] pointer-events-none" />
+      {/* 2. Overlay Gradiente (Garante que os botões e texto nunca perdem legibilidade) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent z-[1] pointer-events-none" />
 
       {/* Content */}
-      {/* NOTA: 'pointer-events-auto' adicionado para garantir que podes clicar nos botões */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pointer-events-auto">
 
         <motion.div

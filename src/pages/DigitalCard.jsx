@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Instagram, Globe, MapPin, UserPlus, Check, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const DigitalCard = () => {
+
+  useEffect(() => {
+        document.title = "Cartao Digital | NCruz Carros";
+        window.scrollTo(0, 0);
+      }, []);
+
   // Estado para controlar se o link foi copiado
   const [copied, setCopied] = useState(false);
 
@@ -40,7 +46,7 @@ const DigitalCard = () => {
         </div>
 
         {/* Nome e Título */}
-        <h1 className="text-3xl font-extrabold text-white mb-1 tracking-tight">NCruz Carros</h1>
+        <h1 className="text-3xl font-extrabold text-white mb-1 tracking-tight">José Cruz</h1>
         <p className="text-gray-400 font-medium mb-8 text-center">Encontra o carro certo para ti.</p>
 
         {/* BOTÃO PRINCIPAL EM DESTAQUE - Guardar Contacto */}
@@ -86,7 +92,7 @@ const DigitalCard = () => {
           </a>
 
           {/* Localização */}
-          <a href="https://www.google.com/maps/place/R.+de+Angola,+Olival+Basto/@38.7942945,-9.1643218,879m/data=!3m1!1e3!4m6!3m5!1s0xd19329f9844073b:0x698f93abcfae02f8!8m2!3d38.7940018!4d-9.1647081!16s%2Fg%2F1tffqm0t?hl=pt-PT&entry=ttu&g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white/10 hover:bg-brand-red text-white p-4 rounded-xl transition-all border border-white/5 hover:border-brand-red group">
+          <a href="https://maps.app.goo.gl/JvbmvQa3KR1rJkji9" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white/10 hover:bg-brand-red text-white p-4 rounded-xl transition-all border border-white/5 hover:border-brand-red group">
             <div className="bg-white/10 p-3 rounded-lg group-hover:bg-white/20 transition-colors flex items-center justify-center w-12 h-12">
               <MapPin size={24} className="text-brand-red group-hover:text-white" />
             </div>
