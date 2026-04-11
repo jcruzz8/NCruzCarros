@@ -64,7 +64,7 @@ const Navbar = () => {
             </Link>
 
             {/* Usar tag <a> no mobile também */}
-            <a href="/#contactos" onClick={closeMenu} className="inline-flex bg-brand-red hover:bg-red-700 text-white px-6 py-3 rounded-full font-bold transition-all items-center gap-2 w-fit mt-2">
+            <a href="tel:+351928346476" className="bg-brand-red hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-bold transition-all flex items-center gap-2">
               <Phone size={18} />
               Contactar
             </a>
