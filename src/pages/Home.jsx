@@ -7,7 +7,7 @@ import ContactSection from '../components/ContactSection';
 const Home = () => {
 
   useEffect(() => {
-    document.title = "NCRUZ Carros | Stand Automóvel";
+    document.title = "NCruz Carros | Stand Automóvel";
     window.scrollTo(0, 0);
   }, []);
 
