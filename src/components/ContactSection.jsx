@@ -109,7 +109,7 @@ const ContactSection = () => {
               <div>
                 <label className="flex items-center gap-2 text-sm font-bold text-white mb-2">
                   <User size={16} className="text-brand-red" />
-                  Nome Completo
+                  Nome e Apelido
                 </label>
                 <input 
                   type="text" 
@@ -158,6 +158,7 @@ const ContactSection = () => {
                 <input 
                   type="text" 
                   name="brand"
+                  required
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all" 
                   placeholder="Ex: BMW, Mercedes, Audi..." 
                 />
@@ -167,11 +168,12 @@ const ContactSection = () => {
               <div>
                 <label className="flex items-center gap-2 text-sm font-bold text-white mb-2">
                   <Car size={16} className="text-brand-red" />
-                  Modelo (Opcional)
+                  Modelo
                 </label>
                 <input 
                   type="text" 
                   name="model"
+                  required
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all" 
                   placeholder="Ex: Série 5, Classe C, A6..." 
                 />
@@ -214,6 +216,7 @@ const ContactSection = () => {
                 <input 
                   type="number" 
                   name="budget"
+                  required
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all" 
                   placeholder="45000" 
                 />
