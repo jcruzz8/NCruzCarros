@@ -34,9 +34,8 @@ const Navbar = () => {
               <Link to="/sobre" className="text-gray-300 hover:text-brand-red transition-colors font-medium">
                 Sobre Nós
               </Link>
-
-              {/* Usar tag <a> para a âncora do formulário de contactos funcionar */}
-              <a href="/#contactos" className="bg-brand-red hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-bold transition-all flex items-center gap-2">
+              
+              <a href="tel:+351928346476" className="bg-brand-red hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-bold transition-all flex items-center gap-2">
                 <Phone size={18} />
                 Contactar
               </a>
