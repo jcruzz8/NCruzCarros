@@ -7,15 +7,15 @@ const Footer = () => {
     <footer className="bg-black border-t border-white/10 pt-16 pb-8 relative overflow-hidden">
 
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-75 shadow-[0_0_15px_rgba(220,38,38,0.6)]"></div>
-      
+
       {/* Um brilho extra por cima da linha para dar efeito 3D */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-brand-red blur-[2px] opacity-50"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Mudei para grid-cols-4 para dar mais espaço à marca e alinhar perfeitamente */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-          
+
           {/* Brand - Agora ocupa 2 colunas no desktop */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-6">
@@ -33,6 +33,7 @@ const Footer = () => {
               <li><Link to="/stock" className="hover:text-brand-red transition-colors">Stock Local</Link></li>
               <li><a href="/#importacao" className="hover:text-brand-red transition-colors">Importação</a></li>
               <li><a href="/#contactos" className="hover:text-brand-red transition-colors">Contactos</a></li>
+              <li><Link to="/cartao" className="hover:text-brand-red transition-colors">Cartão Digital</Link></li>
             </ul>
           </div>
 
@@ -41,19 +42,19 @@ const Footer = () => {
             <h4 className="text-white font-bold mb-6">Redes Sociais</h4>
             <div className="flex gap-4">
               {/* Trocado <Link> por <a> com target="_blank" */}
-              <a 
-                href="https://www.instagram.com/ncruz_carros/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.instagram.com/ncruz_carros/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-brand-red hover:text-white transition-all"
               >
                 <Instagram size={20} />
               </a>
-              <a 
-                href="https://www.olx.pt/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-brand-red hover:text-white transition-all border border-transparent hover:border-white/20" 
+              <a
+                href="https://m.olx.pt/ads/user/9PtD/?my_ads=0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-brand-red hover:text-white transition-all border border-transparent hover:border-white/20"
                 title="Ver no OLX"
               >
                 <span className="font-extrabold text-[10px] tracking-widest">OLX</span>
