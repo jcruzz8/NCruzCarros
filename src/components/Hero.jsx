@@ -82,7 +82,8 @@ const Hero = () => {
             <p className="text-3xl font-bold text-white">30</p>
             <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Anos de Mercado</p>
           </div>
-          <div>
+          {/* NOVA CLASSE ADICIONADA AQUI: col-span-2 md:col-span-1 */}
+          <div className="col-span-2 md:col-span-1">
             <p className="text-3xl font-bold text-white">24h</p>
             <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Resposta</p>
           </div>
