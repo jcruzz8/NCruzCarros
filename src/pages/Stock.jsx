@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { Link } from 'react-router-dom';
-import { Fuel, Calendar, Gauge, ArrowRight, Zap, CarFront, Filter, Search, XCircle, ChevronLeft, ChevronRight } from 'lucide-react'; // Adicionei ChevronLeft e ChevronRight
+import { Fuel, Calendar, Gauge, ArrowRight, Zap, CarFront, Filter, Search, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Stock = () => {
   const [cars, setCars] = useState([]);
@@ -14,7 +14,9 @@ const Stock = () => {
   const [filterMake, setFilterMake] = useState('Todas');
   const [filterYear, setFilterYear] = useState('Todos');
   const [filterFuel, setFilterFuel] = useState('Todos');
-  const [minPrice, setMinPrice] = useState('');
+  
+  // ALTERAÇÃO: Mudámos de minPrice para maxPrice
+  const [maxPrice, setMaxPrice] = useState('');
 
   // --- NOVO: ESTADOS PARA PAGINAÇÃO ---
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,10 +78,14 @@ const Stock = () => {
       result = result.filter(car => car.fuel === filterFuel);
     }
 
-    // 5. Filtro de Preço Mínimo
-    if (minPrice) {
-      const min = parseInt(minPrice, 10);
-      result = result.filter(car => parsePrice(car.price) >= min);
+    // 5. Filtro de Preço Máximo (ALTERAÇÃO FEITA AQUI)
+    if (maxPrice) {
+      const max = parseInt(maxPrice, 10);
+      result = result.filter(car => {
+        const numericPrice = parsePrice(car.price);
+        // Só mostra se tiver um preço numérico maior que zero E for menor/igual ao máximo escolhido
+        return numericPrice > 0 && numericPrice <= max;
+      });
     }
 
     // 6. Ordenação
@@ -96,7 +102,7 @@ const Stock = () => {
 
     setCurrentPage(1); // Importante: Volta à página 1 sempre que os filtros mudam!
     setFilteredCars(result);
-  }, [cars, searchTerm, sortOrder, filterMake, filterYear, filterFuel, minPrice]);
+  }, [cars, searchTerm, sortOrder, filterMake, filterYear, filterFuel, maxPrice]); // ALTERADO nas dependências
 
 
   // --- LÓGICA DE PAGINAÇÃO ---
@@ -131,7 +137,7 @@ const Stock = () => {
     setFilterMake('Todas');
     setFilterYear('Todos');
     setFilterFuel('Todos');
-    setMinPrice('');
+    setMaxPrice(''); // ALTERADO AQUI
     setCurrentPage(1);
   };
 
@@ -208,12 +214,13 @@ const Stock = () => {
                   </select>
                 </div>
                 <div>
-                  <select value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="w-full bg-black border border-white/10 text-white p-3 rounded-lg focus:border-brand-red outline-none appearance-none">
-                    <option value="">Preço a partir de...</option>
-                    <option value="20000">20.000 €</option>
-                    <option value="50000">50.000 €</option>
-                    <option value="100000">100.000 €</option>
-                    <option value="150000">150.000 €</option>
+                  {/* ALTERAÇÃO FEITA AQUI NO DROPDOWN DO PREÇO */}
+                  <select value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="w-full bg-black border border-white/10 text-white p-3 rounded-lg focus:border-brand-red outline-none appearance-none">
+                    <option value="">Preço até...</option>
+                    <option value="20000">Até 20.000 €</option>
+                    <option value="50000">Até 50.000 €</option>
+                    <option value="100000">Até 100.000 €</option>
+                    <option value="150000">Até 150.000 €</option>
                   </select>
                 </div>
                 <div>
@@ -226,7 +233,8 @@ const Stock = () => {
                 </div>
               </div>
 
-              {(searchTerm !== '' || filterMake !== 'Todas' || filterYear !== 'Todos' || minPrice !== '') && (
+              {/* ALTERADO AQUI TAMBÉM A CONDIÇÃO DO BOTÃO DE LIMPAR FILTROS */}
+              {(searchTerm !== '' || filterMake !== 'Todas' || filterYear !== 'Todos' || maxPrice !== '') && (
                 <div className="mt-4 flex justify-end">
                   <button onClick={resetFilters} className="flex items-center gap-2 text-sm text-gray-400 hover:text-brand-red transition-colors">
                     <XCircle size={16} /> Limpar Filtros

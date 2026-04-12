@@ -159,7 +159,7 @@ const CarDetail = () => {
 
               <div className="absolute top-4 left-4">
                  {/* ALTERAÇÃO 1: Vendido agora fica vermelho (apenas Reservado fica cinza) */}
-                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' ? 'bg-gray-600' : 'bg-brand-red'}`}>
+                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' ? 'bg-brand-red' : 'bg-brand-red'}`}>
                    {car.tag}
                  </span>
               </div>
