@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { Upload, X, Plus, Trash2, Edit2, XCircle, Star, Eye, Calendar, Gauge, Fuel, Zap, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react'; // Adicionei CheckCircle2 e AlertCircle
+import { Upload, X, Plus, Trash2, Edit2, XCircle, Star, Eye, Calendar, Gauge, Fuel, Zap, ArrowRight, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react'; // Adicionei ChevronLeft e ChevronRight
 
 const Admin = () => {
   const [loading, setLoading] = useState(false);
@@ -15,11 +15,15 @@ const Admin = () => {
   
   // Preview e Toast (Notificação Elegante)
   const [showPreview, setShowPreview] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' }); // NOVO ESTADO PARA O TOAST
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   const [existingCars, setExistingCars] = useState([]);
   const [loadingCars, setLoadingCars] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  
+  // --- NOVO: ESTADOS PARA PAGINAÇÃO ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 10;
   
   const [formData, setFormData] = useState({
     make: '', model: '', version: '', price: '', year: '',
@@ -30,10 +34,30 @@ const Admin = () => {
   const [accessCode, setAccessCode] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // --- FUNÇÃO DO TOAST (A MENSAGEM BONITA) ---
+  // --- LÓGICA DE PAGINAÇÃO ---
+  // Calcula quais os carros a mostrar na página atual
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = existingCars.slice(indexOfFirstCar, indexOfLastCar);
+  const totalPages = Math.ceil(existingCars.length / carsPerPage);
+
+  // Se apagares o último carro de uma página, volta para a página anterior automaticamente
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [existingCars, totalPages, currentPage]);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   const showToastMessage = (message, type = 'success') => {
     setToast({ show: true, message, type });
-    // Esconde a mensagem automaticamente após 4 segundos
     setTimeout(() => {
       setToast({ show: false, message: '', type: 'success' });
     }, 4000);
@@ -51,17 +75,16 @@ const Admin = () => {
   };
 
   const handleDeleteCar = async (id) => {
-    // O confirm continua a ser útil para evitar que apagues sem querer
     if (!window.confirm('Tem a certeza que deseja apagar este anúncio?')) return;
     try {
       const { error } = await supabase.from('cars').delete().eq('id', id);
       if (error) throw error;
       
-      showToastMessage('Anúncio apagado com sucesso!', 'success'); // MENSAGEM NOVA
+      showToastMessage('Anúncio apagado com sucesso!', 'success');
       fetchExistingCars();
       if (editingId === id) cancelEdit();
     } catch (error) {
-      showToastMessage('Erro ao apagar carro: ' + error.message, 'error'); // MENSAGEM NOVA
+      showToastMessage('Erro ao apagar carro: ' + error.message, 'error');
     }
   };
 
@@ -152,18 +175,19 @@ const Admin = () => {
       if (editingId) {
         const { error: dbError } = await supabase.from('cars').update({ ...formData, images: finalImages }).eq('id', editingId);
         if (dbError) throw dbError;
-        showToastMessage('Anúncio atualizado com sucesso!', 'success'); // MENSAGEM NOVA
+        showToastMessage('Anúncio atualizado com sucesso!', 'success');
       } else {
         const { error: dbError } = await supabase.from('cars').insert([{ ...formData, images: finalImages }]);
         if (dbError) throw dbError;
-        showToastMessage('Novo anúncio publicado com sucesso!', 'success'); // MENSAGEM NOVA
+        showToastMessage('Novo anúncio publicado com sucesso!', 'success');
+        setCurrentPage(1); // Volta para a primeira página ao adicionar novo
       }
 
       cancelEdit();
       fetchExistingCars();
 
     } catch (error) {
-      showToastMessage('Erro ao guardar anúncio: ' + error.message, 'error'); // MENSAGEM NOVA DE ERRO
+      showToastMessage('Erro ao guardar anúncio: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -184,7 +208,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-neutral-950 pt-24 pb-12 px-4 relative overflow-x-hidden">
       
-      {/* ================= TOAST NOTIFICATION (MENSAGEM ELEGANTE) ================= */}
+      {/* ================= TOAST NOTIFICATION ================= */}
       {toast.show && (
         <div className="fixed bottom-8 right-8 z-[200] animate-bounce">
           <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border backdrop-blur-md text-white transition-all duration-300
@@ -244,7 +268,6 @@ const Admin = () => {
           </div>
         </div>
       )}
-
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         
@@ -319,7 +342,7 @@ const Admin = () => {
               <input name="make" placeholder="Marca (Ex: Porsche)" value={formData.make} onChange={handleInputChange} required className="bg-black border border-white/10 p-3 rounded text-white" />
               <input name="model" placeholder="Modelo (Ex: 911)" value={formData.model} onChange={handleInputChange} required className="bg-black border border-white/10 p-3 rounded text-white" />
               <input name="version" placeholder="Versão (Ex: Carrera S)" value={formData.version} onChange={handleInputChange} className="bg-black border border-white/10 p-3 rounded text-white" />
-              <input name="price" placeholder="Preço (Ex: 140.000€)" value={formData.price} onChange={handleInputChange} required className="bg-black border border-white/10 p-3 rounded text-white" />
+              <input name="price" placeholder="Preço (Ex: 140.000€)" value={formData.price} onChange={handleInputChange} className="bg-black border border-white/10 p-3 rounded text-white" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -352,41 +375,76 @@ const Admin = () => {
         </div>
 
         {/* LADO DIREITO: Gerir Stock Atual */}
-        <div className="bg-neutral-900 p-8 rounded-2xl border border-white/10 h-fit">
-          <h2 className="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-4">Gerir Stock Atual</h2>
+        <div className="bg-neutral-900 p-8 rounded-2xl border border-white/10 h-fit flex flex-col">
+          <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+            <h2 className="text-2xl font-bold text-white">Gerir Stock Atual</h2>
+            {existingCars.length > 0 && (
+               <span className="text-brand-red font-bold bg-brand-red/10 px-3 py-1 rounded-full text-sm">
+                 {existingCars.length} {existingCars.length === 1 ? 'carro' : 'carros'}
+               </span>
+            )}
+          </div>
           
           {loadingCars ? (
             <p className="text-gray-400">A carregar stock...</p>
           ) : existingCars.length === 0 ? (
             <p className="text-gray-400">Não há carros em stock de momento.</p>
           ) : (
-            <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
-              {existingCars.map((car) => (
-                <div key={car.id} className={`bg-black p-4 rounded-xl border flex items-center justify-between group transition-colors ${editingId === car.id ? 'border-brand-red' : 'border-white/10'}`}>
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-12 bg-neutral-800 rounded overflow-hidden">
-                      <img src={car.images && car.images.length > 0 ? car.images[0] : '/placeholder.jpg'} alt={car.model} className="w-full h-full object-cover"/>
-                    </div>
-                    <div>
-                      <p className="text-white font-bold text-sm sm:text-base">{car.make} {car.model}</p>
-                      <div className="flex gap-2 text-xs text-gray-500">
-                        <span>{car.price}</span> • 
-                        <span className={car.tag === 'Disponível' ? 'text-green-500' : car.tag === 'Vendido' ? 'text-red-500' : 'text-orange-500'}>{car.tag}</span>
+            <>
+              {/* LISTA DE CARROS (Apenas os da página atual) */}
+              <div className="space-y-4 pr-2">
+                {currentCars.map((car) => (
+                  <div key={car.id} className={`bg-black p-4 rounded-xl border flex items-center justify-between group transition-colors ${editingId === car.id ? 'border-brand-red' : 'border-white/10'}`}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-12 bg-neutral-800 rounded overflow-hidden">
+                        <img src={car.images && car.images.length > 0 ? car.images[0] : '/placeholder.jpg'} alt={car.model} className="w-full h-full object-cover"/>
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-sm sm:text-base">{car.make} {car.model}</p>
+                        <div className="flex gap-2 text-xs text-gray-500">
+                          <span>{car.price}</span> • 
+                          <span className={car.tag === 'Disponível' ? 'text-green-500' : car.tag === 'Vendido' ? 'text-red-500' : 'text-orange-500'}>{car.tag}</span>
+                        </div>
                       </div>
                     </div>
+                    
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEditClick(car)} className={`p-2 rounded transition-colors ${editingId === car.id ? 'text-brand-red bg-red-500/10' : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10'}`} title="Editar Anúncio">
+                        <Edit2 size={20} />
+                      </button>
+                      <button onClick={() => handleDeleteCar(car.id)} className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors" title="Apagar Anúncio">
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
                   </div>
+                ))}
+              </div>
+
+              {/* PAGINAÇÃO (Botões de Anterior / Próximo) */}
+              {totalPages > 1 && (
+                <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/10">
+                  <button 
+                    onClick={prevPage} 
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 p-2 px-4 rounded bg-neutral-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors text-sm font-medium"
+                  >
+                    <ChevronLeft size={18} /> Anterior
+                  </button>
                   
-                  <div className="flex gap-2">
-                    <button onClick={() => handleEditClick(car)} className={`p-2 rounded transition-colors ${editingId === car.id ? 'text-brand-red bg-red-500/10' : 'text-gray-500 hover:text-orange-400 hover:bg-orange-500/10'}`} title="Editar Anúncio">
-                      <Edit2 size={20} />
-                    </button>
-                    <button onClick={() => handleDeleteCar(car.id)} className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors" title="Apagar Anúncio">
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
+                  <span className="text-gray-400 text-sm font-medium">
+                    Página <span className="text-white">{currentPage}</span> de {totalPages}
+                  </span>
+                  
+                  <button 
+                    onClick={nextPage} 
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 p-2 px-4 rounded bg-neutral-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-700 transition-colors text-sm font-medium"
+                  >
+                    Próximo <ChevronRight size={18} />
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 
