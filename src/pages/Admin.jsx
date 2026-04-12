@@ -23,7 +23,7 @@ const Admin = () => {
   
   // --- NOVO: ESTADOS PARA PAGINAÇÃO ---
   const [currentPage, setCurrentPage] = useState(1);
-  const carsPerPage = 10;
+  const carsPerPage = 6;
   
   const [formData, setFormData] = useState({
     make: '', model: '', version: '', price: '', year: '',

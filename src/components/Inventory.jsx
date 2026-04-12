@@ -82,7 +82,8 @@ const Inventory = () => {
                 <Link to={`/carro/${car.id}`} key={car.id} className="group bg-neutral-900 rounded-lg overflow-hidden border border-white/5 hover:border-brand-red/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(220,38,38,0.15)] flex flex-col">
                   <div className="relative h-64 overflow-hidden">
                     <div className="absolute top-4 left-4 z-10">
-                       <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white rounded-sm ${car.tag === 'Reservado' || car.tag === 'Vendido' ? 'bg-brand-red' : 'bg-brand-red'}`}>
+                       {/* ALTERAÇÃO: Mantive a cor do Reservado cinza, tal como fizemos no botão de Stock e CarDetail */}
+                       <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white rounded-sm ${car.tag === 'Reservado' ? 'bg-brand-red' : 'bg-brand-red'}`}>
                          {car.tag}
                        </span>
                     </div>
@@ -97,20 +98,37 @@ const Inventory = () => {
                   <div className="p-6 flex flex-col flex-grow bg-neutral-900 relative z-20">
                     <div className="mb-4">
                       <h3 className="text-xl font-bold text-white mb-1">{car.make} {car.model}</h3>
-                      <p className="text-brand-red font-medium truncate">{car.version || car.transmission}</p>
+                      {/* SÓ APARECE A VERSÃO/CAIXA SE EXISTIR */}
+                      {(car.version || car.transmission) && (
+                        <p className="text-brand-red font-medium truncate">{car.version || car.transmission}</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-y-4 gap-x-2 mb-6 text-sm text-gray-400">
-                      <div className="flex items-center gap-2"><Calendar size={16} className="text-brand-red" /><span>{car.year}</span></div>
-                      <div className="flex items-center gap-2"><Gauge size={16} className="text-brand-red" /><span>{car.mileage}</span></div>
-                      <div className="flex items-center gap-2"><Fuel size={16} className="text-brand-red" /><span>{car.fuel}</span></div>
-                      <div className="flex items-center gap-2"><Zap size={16} className="text-brand-red" /><span>{car.transmission}</span></div>
+                      {/* RENDERIZAÇÃO CONDICIONAL: Só aparece se a variável não estiver vazia */}
+                      {car.year && (
+                        <div className="flex items-center gap-2"><Calendar size={16} className="text-brand-red" /><span>{car.year}</span></div>
+                      )}
+                      {car.mileage && (
+                        <div className="flex items-center gap-2"><Gauge size={16} className="text-brand-red" /><span>{car.mileage}</span></div>
+                      )}
+                      {car.fuel && (
+                        <div className="flex items-center gap-2"><Fuel size={16} className="text-brand-red" /><span>{car.fuel}</span></div>
+                      )}
+                      {car.transmission && (
+                        <div className="flex items-center gap-2"><Zap size={16} className="text-brand-red" /><span>{car.transmission}</span></div>
+                      )}
                     </div>
 
                     <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
                       <div>
-                        <p className="text-xs text-gray-500 uppercase">Preço</p>
-                        <p className="text-2xl font-bold text-white">{car.price}</p>
+                        {/* SÓ APARECE O PREÇO SE ELE EXISTIR */}
+                        {car.price && (
+                          <>
+                            <p className="text-xs text-gray-500 uppercase">Preço</p>
+                            <p className="text-2xl font-bold text-white">{car.price}</p>
+                          </>
+                        )}
                       </div>
                       <div className="p-3 bg-white/5 group-hover:bg-brand-red rounded-full transition-colors group-hover:translate-x-1 duration-300">
                         <ArrowRight size={20} className="text-white" />
