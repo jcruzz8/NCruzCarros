@@ -82,7 +82,7 @@ const Inventory = () => {
                 <Link to={`/carro/${car.id}`} key={car.id} className="group bg-neutral-900 rounded-lg overflow-hidden border border-white/5 hover:border-brand-red/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(220,38,38,0.15)] flex flex-col">
                   <div className="relative h-64 overflow-hidden">
                     <div className="absolute top-4 left-4 z-10">
-                       <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white rounded-sm ${car.tag === 'Reservado' || car.tag === 'Vendido' ? 'bg-gray-600' : 'bg-brand-red'}`}>
+                       <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white rounded-sm ${car.tag === 'Reservado' || car.tag === 'Vendido' ? 'bg-brand-red' : 'bg-brand-red'}`}>
                          {car.tag}
                        </span>
                     </div>

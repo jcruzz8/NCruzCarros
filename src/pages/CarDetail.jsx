@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Calendar, Gauge, Fuel, Zap, ArrowLeft, CheckCircle2, Phone, MessageSquare, Settings, ZoomIn, X, ChevronLeft, ChevronRight } from 'lucide-react'; // Adicionei ChevronLeft e ChevronRight
+import { Calendar, Gauge, Fuel, Zap, ArrowLeft, CheckCircle2, Phone, MessageSquare, Settings, ZoomIn, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CarDetail = () => {
   const { id } = useParams();
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // NOVO: Em vez do link da imagem, guardamos o número da imagem atual (0 é a primeira)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
@@ -30,16 +29,14 @@ const CarDetail = () => {
       console.error("Erro ao procurar carro:", error);
     } else if (data) {
       setCar(data);
-      setCurrentIndex(0); // Garante que começa sempre na primeira foto
+      setCurrentIndex(0);
     }
     setLoading(false);
   }
 
-  // --- FUNÇÕES DE NAVEGAÇÃO DAS SETAS ---
   const handleNextImage = (e) => {
-    e.stopPropagation(); // Evita fechar a lightbox ao clicar na seta
+    e.stopPropagation();
     if (car && car.images) {
-      // Se estiver na última imagem, volta para a primeira (0). Se não, avança uma.
       setCurrentIndex((prev) => (prev === car.images.length - 1 ? 0 : prev + 1));
     }
   };
@@ -47,7 +44,6 @@ const CarDetail = () => {
   const handlePrevImage = (e) => {
     e.stopPropagation();
     if (car && car.images) {
-      // Se estiver na primeira imagem (0), vai para a última. Se não, recua uma.
       setCurrentIndex((prev) => (prev === 0 ? car.images.length - 1 : prev - 1));
     }
   };
@@ -75,19 +71,17 @@ const CarDetail = () => {
     );
   }
 
-  // Descobre qual é a imagem atual (ou usa um placeholder se não houver imagens)
   const currentImageUrl = car.images && car.images.length > 0 ? car.images[currentIndex] : '/placeholder.jpg';
 
   return (
     <div className="bg-brand-dark min-h-screen pt-24 pb-12 relative overflow-hidden">
       
-      {/* --- LIGHTBOX AVANÇADA (COM SETAS E TAMANHO REDUZIDO) --- */}
+      {/* --- LIGHTBOX --- */}
       {isLightboxOpen && (
         <div 
           className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-12 cursor-zoom-out"
           onClick={() => setIsLightboxOpen(false)}
         >
-          {/* Botão Fechar */}
           <button 
             className="absolute top-6 right-6 p-2 text-white/70 hover:text-white bg-black/50 hover:bg-brand-red rounded-full transition-all z-[101]"
             onClick={(e) => {
@@ -98,10 +92,7 @@ const CarDetail = () => {
             <X size={32} />
           </button>
 
-          {/* Contentor da Imagem (Tamanho Limitado para não colar aos cantos) */}
           <div className="relative w-full max-w-6xl h-[80vh] flex items-center justify-center">
-            
-            {/* Seta Esquerda */}
             {car.images && car.images.length > 1 && (
               <button 
                 onClick={handlePrevImage} 
@@ -111,15 +102,13 @@ const CarDetail = () => {
               </button>
             )}
 
-            {/* Imagem Central */}
             <img 
               src={currentImageUrl} 
               alt="Imagem ampliada" 
               className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-              onClick={(e) => e.stopPropagation()} // Clicar na imagem não fecha a janela
+              onClick={(e) => e.stopPropagation()} 
             />
 
-            {/* Seta Direita */}
             {car.images && car.images.length > 1 && (
               <button 
                 onClick={handleNextImage} 
@@ -128,20 +117,17 @@ const CarDetail = () => {
                 <ChevronRight size={36} />
               </button>
             )}
-
           </div>
           
-          {/* Indicador de foto atual (Ex: 1 / 5) */}
           {car.images && car.images.length > 1 && (
             <div className="absolute bottom-6 text-white font-medium tracking-widest text-sm bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">
               {currentIndex + 1} / {car.images.length}
             </div>
           )}
-
         </div>
       )}
 
-      {/* Padrão de Fundo Subtil */}
+      {/* Padrão de Fundo */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
         <div className="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark"></div>
@@ -172,7 +158,8 @@ const CarDetail = () => {
               </div>
 
               <div className="absolute top-4 left-4">
-                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' || car.tag === 'Vendido' ? 'bg-gray-600' : 'bg-brand-red'}`}>
+                 {/* ALTERAÇÃO 1: Vendido agora fica vermelho (apenas Reservado fica cinza) */}
+                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' ? 'bg-gray-600' : 'bg-brand-red'}`}>
                    {car.tag}
                  </span>
               </div>
@@ -184,7 +171,7 @@ const CarDetail = () => {
                 {car.images.map((img, index) => (
                   <button 
                     key={index} 
-                    onClick={() => setCurrentIndex(index)} // Muda para a imagem clicada
+                    onClick={() => setCurrentIndex(index)}
                     className={`flex-shrink-0 w-24 h-16 rounded-lg overflow-hidden border-2 transition-all ${currentIndex === index ? 'border-brand-red opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}`}
                   >
                     <img src={img} alt={`Miniatura ${index + 1}`} className="w-full h-full object-cover" />
@@ -237,28 +224,54 @@ const CarDetail = () => {
               </div>
             )}
 
-            <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 p-8 rounded-2xl border border-brand-red/30 shadow-[0_0_30px_rgba(220,38,38,0.1)] relative overflow-hidden mt-auto">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-              
-              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                <CheckCircle2 className="text-brand-red" />
-                Interessado neste {car.make}?
-              </h3>
-              <p className="text-gray-300 text-sm mb-6">
-                Marque já a sua visita e venha ver este carro ao nosso stand. Sem qualquer compromisso.
-              </p>
+            {/* ALTERAÇÃO 2: Renderização Condicional da Caixa de Contacto (Vendido vs Disponível) */}
+            {car.tag === 'Vendido' ? (
+              <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 p-8 rounded-2xl border border-brand-red/30 shadow-[0_0_30px_rgba(220,38,38,0.1)] relative overflow-hidden mt-auto">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                
+                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="text-brand-red" />
+                  Este {car.make} já foi vendido!
+                </h3>
+                <p className="text-gray-300 text-sm mb-6">
+                  Não chegou a tempo? Não se preocupe. A nossa especialidade é a importação à medida. Entre já em contacto connosco para encontrarmos um igual para si.
+                </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg">
-                  <MessageSquare size={18} />
-                  Pedir Informações
-                </a>
-                <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
-                  <Phone size={18} />
-                  Ligar Agora
-                </a>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg">
+                    <MessageSquare size={18} />
+                    Pedir Orçamento
+                  </a>
+                  <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <Phone size={18} />
+                    Ligar Agora
+                  </a>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 p-8 rounded-2xl border border-brand-red/30 shadow-[0_0_30px_rgba(220,38,38,0.1)] relative overflow-hidden mt-auto">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                
+                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="text-brand-red" />
+                  Interessado neste {car.make}?
+                </h3>
+                <p className="text-gray-300 text-sm mb-6">
+                  Marque já a sua visita e venha ver este carro ao nosso stand. Sem qualquer compromisso.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg">
+                    <MessageSquare size={18} />
+                    Pedir Informações
+                  </a>
+                  <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <Phone size={18} />
+                    Ligar Agora
+                  </a>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>
