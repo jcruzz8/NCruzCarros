@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram } from 'lucide-react'; // Retirei os ícones não usados para limpar o código
+import { Instagram, Youtube } from 'lucide-react'; // Retirei os ícones não usados para limpar o código
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -58,6 +58,15 @@ const Footer = () => {
                 title="Ver no OLX"
               >
                 <span className="font-extrabold text-[10px] tracking-widest">OLX</span>
+              </a>
+              <a
+                href="https://www.youtube.com/@ncruzcarros"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-brand-red hover:text-white transition-all"
+                title="Seguir no YouTube"
+              >
+                <Youtube size={20} />
               </a>
             </div>
           </div>
