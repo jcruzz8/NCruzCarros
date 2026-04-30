@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient';
 import { 
   Calendar, Gauge, Fuel, Zap, ArrowLeft, CheckCircle2, Phone, MessageSquare, 
   Settings, ZoomIn, X, ChevronLeft, ChevronRight, Users, CarFront, Flag, 
-  Wind, Palette, DoorOpen, ShieldCheck, Activity, ArrowRight, PlayCircle 
+  Wind, Palette, DoorOpen, ShieldCheck, Activity, ArrowRight, PlayCircle, FileText 
 } from 'lucide-react';
 
 const CarDetail = () => {
@@ -15,7 +15,7 @@ const CarDetail = () => {
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [isZoomed, setIsZoomed] = useState(false); // NOVO: Controla se a imagem está super ampliada
+  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -83,7 +83,6 @@ const CarDetail = () => {
   const handleNextMedia = (e) => { e.stopPropagation(); if (mediaCount > 0) setCurrentIndex((prev) => (prev === mediaCount - 1 ? 0 : prev + 1)); };
   const handlePrevMedia = (e) => { e.stopPropagation(); if (mediaCount > 0) setCurrentIndex((prev) => (prev === 0 ? mediaCount - 1 : prev - 1)); };
 
-  // Setas no Lightbox agora tiram o zoom ao mudar de foto
   const handleLightboxNext = (e) => { e.stopPropagation(); setIsZoomed(false); if (images.length > 0) setCurrentIndex((prev) => (prev >= images.length - 1 ? 0 : prev + 1)); };
   const handleLightboxPrev = (e) => { e.stopPropagation(); setIsZoomed(false); if (images.length > 0) setCurrentIndex((prev) => (prev <= 0 ? images.length - 1 : prev - 1)); };
 
@@ -110,20 +109,17 @@ const CarDetail = () => {
           className={`fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm transition-all duration-300 ${isZoomed ? 'overflow-auto cursor-zoom-out' : 'flex items-center justify-center p-4 cursor-zoom-out'}`} 
           onClick={closeLightbox}
         >
-          {/* Botão de Fechar fixo no canto */}
           <button className="fixed top-6 right-6 p-2 text-white/70 hover:text-white bg-black/50 hover:bg-brand-red rounded-full transition-all z-[1000]" onClick={(e) => { e.stopPropagation(); closeLightbox(); }}>
             <X size={32} />
           </button>
           
           <div className={`relative flex items-center justify-center ${isZoomed ? 'min-w-full min-h-full p-4' : 'w-full max-w-6xl h-[80vh]'}`}>
-            
             {!isZoomed && images.length > 1 && (
               <button onClick={handleLightboxPrev} className="absolute left-0 p-3 text-white bg-black/50 hover:bg-brand-red rounded-full transition-colors z-[101] -translate-x-2 md:-translate-x-8">
                 <ChevronLeft size={36} />
               </button>
             )}
             
-            {/* Imagem Ampliável */}
             <img 
               src={currentImageUrl} 
               alt="Ampliada" 
@@ -149,11 +145,11 @@ const CarDetail = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        {/* ================= SECÇÃO 1: GALERIA E INFO RÁPIDA ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           
           <div className="flex flex-col gap-4">
-            
-            {/* VISOR PRINCIPAL */}
             <div className="relative h-[400px] lg:h-[500px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-neutral-900 group">
               {isVideoCurrent ? (
                 <iframe src={getEmbedUrl(car.video_link)} className="w-full h-full" allowFullScreen></iframe>
@@ -174,7 +170,7 @@ const CarDetail = () => {
               )}
 
               <div className="absolute top-4 left-4 z-20 pointer-events-none">
-                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' ? 'bg-gray-600' : 'bg-brand-red'}`}>{car.tag}</span>
+                 <span className={`px-4 py-2 text-white font-bold rounded-sm shadow-lg tracking-wider uppercase text-sm ${car.tag === 'Reservado' || car.tag === 'Vendido' ? 'bg-gray-600' : 'bg-brand-red'}`}>{car.tag}</span>
               </div>
             </div>
 
@@ -197,92 +193,83 @@ const CarDetail = () => {
           </div>
 
           <div className="flex flex-col h-full">
-            <div className="mb-8 border-b border-white/10 pb-8">
+            <div className="mb-6 border-b border-white/10 pb-6">
               <h2 className="text-gray-400 font-medium text-lg uppercase tracking-widest mb-1">{car.make}</h2>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{car.model}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">{car.model}</h1>
               {car.version && <p className="text-brand-red text-xl font-medium">{car.version}</p>}
-              {car.price && <p className="text-4xl font-bold text-white mt-6">{car.price}</p>}
+              {car.price && <p className="text-4xl font-bold text-white mt-4">{car.price}</p>}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-              {car.year && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Calendar size={14}/> Registo</p><p className="text-white font-bold">{car.year}</p></div>}
-              {car.mileage && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Gauge size={14}/> Km's</p><p className="text-white font-bold">{car.mileage}</p></div>}
-              {car.fuel && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Fuel size={14}/> Combustível</p><p className="text-white font-bold">{car.fuel}</p></div>}
-              {car.power && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Zap size={14}/> Potência</p><p className="text-white font-bold">{car.power}</p></div>}
-              {car.transmission && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Settings size={14}/> Caixa</p><p className="text-white font-bold">{car.transmission}</p></div>}
-              {car.engine_capacity && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Activity size={14}/> Cilindrada</p><p className="text-white font-bold">{car.engine_capacity}</p></div>}
-              {car.origin && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Flag size={14}/> Origem</p><p className="text-white font-bold">{car.origin}</p></div>}
-              {car.segment && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><CarFront size={14}/> Segmento</p><p className="text-white font-bold">{car.segment}</p></div>}
-              {car.color && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Palette size={14}/> Cor</p><p className="text-white font-bold">{car.color}</p></div>}
-              {car.doors && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><DoorOpen size={14}/> Portas</p><p className="text-white font-bold">{car.doors}</p></div>}
-              {car.seats && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Users size={14}/> Lugares</p><p className="text-white font-bold">{car.seats}</p></div>}
-              {car.condition && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Activity size={14}/> Estado</p><p className="text-white font-bold">{car.condition}</p></div>}
-              {car.emissions && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Wind size={14}/> Emissões</p><p className="text-white font-bold">{car.emissions}</p></div>}
-              {car.consumption && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><Fuel size={14}/> Consumos</p><p className="text-white font-bold">{car.consumption}</p></div>}
-              {car.warranty && <div className="bg-neutral-900/50 p-4 rounded-xl border border-white/5 md:col-span-2"><p className="text-gray-500 text-xs uppercase mb-1 flex items-center gap-2"><ShieldCheck size={14}/> Garantia</p><p className="text-white font-bold">{car.warranty}</p></div>}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+              {car.year && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Calendar size={12}/> Registo</p><p className="text-white font-bold text-sm">{car.year}</p></div>}
+              {car.mileage && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Gauge size={12}/> Km's</p><p className="text-white font-bold text-sm">{car.mileage}</p></div>}
+              {car.fuel && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Fuel size={12}/> Combustível</p><p className="text-white font-bold text-sm">{car.fuel}</p></div>}
+              {car.power && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Zap size={12}/> Potência</p><p className="text-white font-bold text-sm">{car.power}</p></div>}
+              {car.transmission && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Settings size={12}/> Caixa</p><p className="text-white font-bold text-sm">{car.transmission}</p></div>}
+              {car.origin && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Flag size={12}/> Origem</p><p className="text-white font-bold text-sm">{car.origin}</p></div>}
+              {car.segment && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><CarFront size={12}/> Segmento</p><p className="text-white font-bold text-sm">{car.segment}</p></div>}
+              {car.color && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Palette size={12}/> Cor</p><p className="text-white font-bold text-sm">{car.color}</p></div>}
+              {car.engine_capacity && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Activity size={12}/> Cilindrada</p><p className="text-white font-bold text-sm">{car.engine_capacity}</p></div>}
+              {car.emissions && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Wind size={12}/> Emissões</p><p className="text-white font-bold text-sm">{car.emissions}</p></div>}
+              {car.consumption && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><Fuel size={12}/> Consumos</p><p className="text-white font-bold text-sm">{car.consumption}</p></div>}
+              {car.warranty && <div className="bg-neutral-900/40 p-3 rounded-xl border border-white/5"><p className="text-gray-500 text-[10px] uppercase mb-1 flex items-center gap-1.5"><ShieldCheck size={12}/> Garantia</p><p className="text-white font-bold text-sm">{car.warranty}</p></div>}
             </div>
 
-            {car.description && (
-              <div className="mb-10">
-                <h3 className="text-white font-bold mb-3 uppercase tracking-wider text-sm">Sobre este veículo</h3>
-                <div className="text-gray-400 leading-relaxed text-sm bg-neutral-900/30 p-6 rounded-xl border border-white/5 whitespace-pre-line">{car.description}</div>
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 p-6 rounded-2xl border border-brand-red/20 shadow-xl">
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2"><CheckCircle2 size={18} className="text-brand-red" /> 
+                {car.tag === 'Vendido' ? 'Gostaria de um igual?' : 'Interessado neste veículo?'}
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"><MessageSquare size={16} />{car.tag === 'Vendido' ? 'Pedir Orçamento' : 'Pedir Informação'}</a>
+                <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"><Phone size={16} />Ligar Agora</a>
               </div>
-            )}
-
-            {car.tag === 'Vendido' ? (
-              <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 p-8 rounded-2xl border border-brand-red/30 shadow-[0_0_30px_rgba(220,38,38,0.1)] relative overflow-hidden mt-auto">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><CheckCircle2 className="text-brand-red" />Este {car.make} já foi vendido!</h3>
-                <p className="text-gray-300 text-sm mb-6">Não chegou a tempo? Não se preocupe. A nossa especialidade é a importação à medida. Entre já em contacto connosco para encontrarmos um igual para si.</p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg"><MessageSquare size={18} />Pedir Orçamento</a>
-                  <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"><Phone size={18} />Ligar Agora</a>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 p-8 rounded-2xl border border-brand-red/30 shadow-[0_0_30px_rgba(220,38,38,0.1)] relative overflow-hidden mt-auto">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><CheckCircle2 className="text-brand-red" />Interessado neste {car.make}?</h3>
-                <p className="text-gray-300 text-sm mb-6">Marque já a sua visita e venha ver este carro ao nosso stand. Sem qualquer compromisso.</p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a href="/#contactos" className="flex-1 bg-brand-red hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-lg"><MessageSquare size={18} />Pedir Informações</a>
-                  <a href="tel:+351928346476" className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"><Phone size={18} />Ligar Agora</a>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* ================= SECÇÃO VEÍCULOS RECOMENDADOS ================= */}
+        {/* ================= SECÇÃO 2: DESCRIÇÃO HORIZONTAL ================= */}
+        {car.description && (
+          <div className="mt-12 relative">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-brand-red/10 rounded-lg text-brand-red"><FileText size={20} /></div>
+              <h3 className="text-xl font-bold text-white uppercase tracking-wider">Sobre este veículo</h3>
+              <div className="flex-grow h-px bg-white/10 ml-4"></div>
+            </div>
+            
+            <div className="bg-neutral-900/40 border border-white/5 p-8 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+               <div className="text-gray-300 leading-relaxed text-base md:text-lg whitespace-pre-line relative z-10 columns-1 md:columns-2 gap-12">
+                 {car.description}
+               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= SECÇÃO 3: RECOMENDADOS ================= */}
         {similarCars.length > 0 && (
           <div className="mt-24 pt-12 border-t border-white/10">
-            <h2 className="text-2xl font-bold text-white mb-8">Recomendados para si</h2>
+            <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+              <div className="w-2 h-8 bg-brand-red rounded-full"></div> Recomendados para si
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {similarCars.map((similarCar) => (
                 <Link to={`/carro/${similarCar.id}`} key={similarCar.id} className="group bg-neutral-900 rounded-xl overflow-hidden border border-white/5 hover:border-brand-red/50 transition-all duration-300 flex flex-col hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]">
                   <div className="relative h-56 overflow-hidden">
                     <img src={similarCar.images?.[0] || '/placeholder.jpg'} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 z-10"><span className={`px-3 py-1 text-xs font-bold uppercase text-white rounded-sm shadow-lg ${similarCar.tag === 'Reservado' ? 'bg-gray-600' : 'bg-brand-red'}`}>{similarCar.tag}</span></div>
+                    <div className="absolute top-4 left-4 z-10"><span className={`px-3 py-1 text-xs font-bold uppercase text-white rounded-sm shadow-lg ${similarCar.tag === 'Reservado' || similarCar.tag === 'Vendido' ? 'bg-gray-600' : 'bg-brand-red'}`}>{similarCar.tag}</span></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent opacity-80" />
                   </div>
-                  
                   <div className="p-6 flex flex-col flex-grow relative z-20">
                     <div className="mb-4">
                       <h3 className="text-lg font-bold text-white leading-tight">{similarCar.make} {similarCar.model}</h3>
                       {similarCar.version && <p className="text-brand-red font-medium text-xs truncate uppercase">{similarCar.version}</p>}
                     </div>
-
                     <div className="grid grid-cols-2 gap-y-3 gap-x-2 mb-6 text-xs text-gray-400 font-medium">
                       {similarCar.year && <div className="flex items-center gap-1.5"><Calendar size={12} className="text-brand-red" /><span>{similarCar.year}</span></div>}
                       {similarCar.mileage && <div className="flex items-center gap-1.5"><Gauge size={12} className="text-brand-red" /><span>{similarCar.mileage}</span></div>}
                     </div>
-
                     <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
-                      {similarCar.price ? (
-                        <p className="text-xl font-black text-white">{similarCar.price}</p>
-                      ) : (
-                        <p className="text-sm font-bold text-gray-400 italic">Sob Consulta</p>
-                      )}
+                      {similarCar.price ? <p className="text-xl font-black text-white">{similarCar.price}</p> : <p className="text-sm font-bold text-gray-400 italic">Sob Consulta</p>}
                       <div className="p-2 bg-white/5 group-hover:bg-brand-red rounded-full transition-all group-hover:translate-x-1"><ArrowRight size={16} className="text-white" /></div>
                     </div>
                   </div>
